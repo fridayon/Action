@@ -68,41 +68,6 @@ let st = '@123hb#*^&xiMEI99'
 let ximeikey = '',id = '',uid='',tid='',name=''
 
 
-if(!$.isNode()&&ximeihd.indexOf("\n") ==-1){
-    ximeiurlArr.push($.getdata('ximeiurl'))
-    ximeihdArr.push($.getdata('ximeihd'))
-} else {
-    if($.isNode()){
-    if (process.env.XIMEI_HD && process.env.XIMEI_HD.indexOf('\n') > -1) {
-        ximeihd = process.env.XIMEI_HD.split('\n');
-    } else {
-        ximeihd = [process.env.XIMEI_HD]
-    };
-    if (process.env.XIMEI_URL && process.env.XIMEI_URL.indexOf('\n') > -1) {
-        ximeiurl = process.env.XIMEI_URL.split('\n');
-    } else {
-        ximeiurl = [process.env.XIMEI_URL]
-    };
-    console.log(` ============脚本执行 - 北京时间 (UTC + 8)：${new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleString()} =============\n`);
- } else if(!$.isNode()&&ximeihd.indexOf("\n")>-1){
-   ximeihd = ximeihd.split("\n")
-   ximeiurl = ximeiurl.split("\n")
-};
-    Object.keys(ximeihd).forEach((item) =>{
-        if (ximeihd[item]) {
-        ximeihdArr.push(ximeihd[item])
-        }
-    });
-    Object.keys(ximeiurl).forEach((item) =>{
-        if (ximeiurl[item]) {
-            ximeiurlArr.push(ximeiurl[item])
-        }
-    });
-
-}
-
-
-
 if ($.isNode()) {
    if (process.env.XIMEI_HD && process.env.XIMEI_HD.indexOf('\n') > -1) {
    ximeihd = process.env.XIMEI_HD.split('\n');
@@ -134,6 +99,7 @@ if ($.isNode()) {
    ximeiurlArr.push($.getdata(`ximeiurl${i}`))
    ximeihdArr.push($.getdata(`ximeihd${i}`))
  }
+}
 
 !(async () => {
   if (ximeihdArr == "") {
@@ -151,9 +117,8 @@ if ($.isNode()) {
         console.log(`\n开始【西梅${$.index}】`)
         await ximei1();
         await ximeixx();
-
-  }
-}
+      }
+    }
 })()
   .catch((e) => $.logErr(e))
   .finally(() => $.done())
