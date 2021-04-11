@@ -1,12 +1,12 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: 25ximei(西梅)
+name: 28wkzz(微客众智)
 
 on:
   workflow_dispatch:
   schedule:
-     - cron: '2 2-16/4 * * *'
+     - cron: '10 */4 * * *'
   watch:
     types: started
 #env:
@@ -29,12 +29,11 @@ jobs:
           cd ~/Scripts
           npm install -g npm
           npm update
-      - name: '运行 【西梅】'
+      - name: '运行 【微客众智】'
         run: |
           cd ~/Scripts
-          node Task/25ximei.js
+          node Task/28wkzz.js
         env:
-          XIMEI_HD: ${{ secrets.XIMEI_HD }}
-          XIMEI_URL: ${{ secrets.XIMEI_URL }}
+          WKZZ_HD: ${{ secrets.WKZZ_HD }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
