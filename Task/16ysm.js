@@ -1,6 +1,6 @@
 /*
 软件名称:云扫码 微信扫描二维码打开
-更新时间：2021-03-26 @肥皂
+更新时间：2021-03-31 @肥皂
 脚本说明：云扫码自动阅读
 脚本为自动完成云扫码的阅读任务
 每日收益1元左右，可多号撸。提现秒到
@@ -9,14 +9,13 @@
 任务打开二维码地址 https://raw.githubusercontent.com/age174/-/main/3B7C4F94-B961-4690-8DF7-B27998789124.png
 微信扫描打开，保存临时码，再去扫码获取数据
 
-
+可以先点阅读任务旁边的关注任务,关注三个公众号先提现三毛再说
 
 本脚本以学习为主！
 首次运行脚本，会提示获取数据
-去云扫码，点击开始阅读，获得阅读数据
-七八秒后返回，获得提交任务数据
-跑脚本到3000金币，手动提现一次，获得自动提现数据
-总共需要三个数据。。
+去云扫码，首页自动获取数据,
+如果mitm没填写获取不到任务,可以到mitm界面添加一个为*的主机名
+获取成功数据之后请删除*
 
 TG电报群: https://t.me/hahaha8028
 
@@ -31,10 +30,11 @@ TG电报群: https://t.me/hahaha8028
 
 3.26更新，云扫码多账号更新优化，加入多账号并发执行，获取ck方式改为和番茄看看一样的方式，不用手动选择抓包账号几，加入通知开关和首次阅读开关限制，自定义提现金额，比例为1:10000，最低提现金额为0.3元，即填写提现金额最少填写3000，注意需要重新更改重写的链接，请在下方获取替换以前的重写，该版本为@ztxtop大佬提交的pr。感谢大佬
 
+3.31更新,修复官方域名更换无法正常跑脚本的问题，请更换一下重写重新抓包
 PS:
 一般两篇文章过后还能阅读那么当天一般都能跑满任务的，需要手动阅读两篇的原因是和番茄看看一样，前两篇文章是调用微信接口鉴权的(这个没有办法解决)，鉴权通过可以继续阅读，不通过则限制阅读(如果你不手动阅读鉴权,直接跑脚本很大几率直接就限制了)，云扫码和番茄看看鉴权通过的话是不会有任务冲突的，一般情况下这两个平台手动阅读了两篇文章都能跑满全部任务。阅读三兄弟的微客众智则不需要手动阅读可以直接跑脚本(可惜ck过期太快，但是不会限制，我的ck最长坚持了四天，有些人就只能坚持一天，建议微客众智的重写保持开启状态。)
 
-boxjs地址 :
+boxjs地址 :  
 
 https://raw.githubusercontent.com/age174/-/main/feizao.box.json
 
@@ -48,24 +48,18 @@ https://raw.githubusercontent.com/age174/-/main/feizao.box.json
 
 [rewrite_local]
 #云扫码
-^http://erd.+?/yunonline/v\d+/redirect/(?!undefined) url script-request-header https://raw.githubusercontent.com/age174/-/main/ysm.js
+^http://.+?[^/]/yunonline/v\d+/redirect/(?!undefined) url script-request-header https://raw.githubusercontent.com/age174/-/main/ysm.js
 
 
 
 #loon
-^http://erd.+?/yunonline/v\d+/redirect/(?!undefined) script-path=https://raw.githubusercontent.com/age174/-/main/ysm.js, requires-body=true, timeout=10, tag=云扫码
+^http://.+?[^/]/yunonline/v\d+/redirect/(?!undefined) script-path=https://raw.githubusercontent.com/age174/-/main/ysm.js, requires-body=true, timeout=10, tag=云扫码
 
 
 
 #surge
 
-云扫码 = type=http-request,pattern=^http://erd.+?/yunonline/v\d+/redirect/(?!undefined),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/age174/-/main/ysm.js,script-update-interval=0
-
-
-
-
-[MITM]
-hostname = .*.top
+云扫码 = type=http-request,pattern=^http://.+?[^/]/yunonline/v\d+/redirect/(?!undefined),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/age174/-/main/ysm.js,script-update-interval=0
 
 
 */
@@ -73,7 +67,8 @@ hostname = .*.top
 const $ = new Env('云扫码')
 let ysm = $.getjson('ysm', [])
 let needNotice = $.getval('ysmNotice') == 'true'
-let ysmBanfirstTask = $.getval('ysmBanfirstTask') == 'false' // 禁止脚本执行首个任务，避免每日脚本跑首次任务导致微信限制
+let ysmBanfirstTask = $.getval('ysmBanfirstTask') == 'true' // 禁止脚本执行首个任务，避免每日脚本跑首次任务导致微信限制
+let ysmBanhalfTask = $.getval('ysmBanhalfTask') == 'true' // 脚本执行完第50个任务时退出任务，再手动阅读2篇避免出现微信限制
 let ysmtxAmt = ($.getval('ysmtxAmt') || '5000') - 0  // 此处修改提现金额，0.3元等于3000币，默认不提现
 ysmtxAmt = ysmtxAmt > 3000 ? (parseInt(ysmtxAmt / 1000) * 1000) : ysmtxAmt > 0 ? 3000 : 0
 let concurrency = ($.getval('ysmConcurrency') || '1') - 0 // 并发执行任务的账号数，默单账号循环执行
@@ -81,7 +76,7 @@ concurrency = concurrency < 1 ? 1 : concurrency
 
 const execNo = [] // 允许执行的账号，为空时不限制，指定时，按照指定的来判断处理，例如：[1,3]
 
-const moveData = 0
+const moveData = 0 
 
 const baseHeaders = {
   "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -109,7 +104,6 @@ if ($.isNode()) {
           ysm.push(JSON.parse(ysmbd[item]))
         }
     });
-
 }
 
 !(async () => {
@@ -143,9 +137,9 @@ if ($.isNode()) {
 function execTask(ac, i) {
   return new Promise(async resolve => {
     try {
-      await $.wait(i * 80)
+      await $.wait(i * 50)
       await ysm4(ac)
-      if ((!execNo || (execNo.length == 0 || execNo.includes(ac.no))) && ac.remain_read && !(ac.day_read < 2 && ysmBanfirstTask)) {
+      if ((!execNo || (execNo.length == 0 || execNo.includes(ac.no))) && ac.remain_read && !(ac.day_read < 2 && ysmBanfirstTask) && !(ysmBanhalfTask && ac.day_read == 50)) {
         $.log(`😄账号${ac.no}今日已读${ac.day_read}次，今日待读${ac.remain_read}次，即将阅读`)
         await $.wait((i + 1) * 600)
         let flag = 0
@@ -221,9 +215,11 @@ function getExecAcList() {
 async function ysmck() {
   const url = $request.url
   let newAc = ''
-  if (url.match(/https?:\/\/.+\/yunonline\/v\d+\/redirect\/(?!undefined)/)) {
+  if (url.match(/https?:\/\/.+?[^/]\/yunonline\/v\d+\/redirect\/(?!undefined)/) || url.match(/https?:\/\/.+?[^/]\/yunonline\/v\d+\/exchange\?/)) {
+    let hd = {...$request.headers}
+    let data = (hd['Referer'] || hd['referer'] || '').match(/^https?:\/\/.+?[^/]\/yunonline\/v\d+\/redirect\/(?!undefined).+$/)
     let no = ysm.length
-    newAc = await updateAndGetCk(no + 1, url, $request.headers)
+    newAc = await updateAndGetCk(no + 1, data && data[0] || url, hd)
     if (newAc) {
       let status = 1
       for (let i = 0, len = no; i < len; i++) {
@@ -285,18 +281,13 @@ async function ysmckMove() {
   let ysmcount = ($.getval('ysmcount') || '1') - 0
   for (let i = 1; i <= ysmcount; i++) {
     let hd = $.getjson(`ysmhd${i>1?i:''}`)
-    let tx = $.getdata(`ysmtx${i>1?i:''}`)
     if (hd) {
-      let data = (hd['Referer'] || hd['referer'] || '').match(/^(https?:\/\/.+?\/)redirect\/(.+?)\?openid=([^&]*)(&|$)/)
-      let openid = data && data[3]
-      if (openid) {
-        ysmArr.push({
-          openid: openid,
-          domain: data[1],
-          secret: data[2],
-          ua: hd['User-Agent'] || hd['user-agent'],
-          txbody: tx || ''
-        })
+      let data = (hd['Referer'] || hd['referer'] || '').match(/^https?:\/\/.+?[^/]\/yunonline\/v\d+\/redirect\/(?!undefined).+$/)
+      if (data) {
+        let newAc = await updateAndGetCk(i, data[0], hd)
+        if (newAc) {
+          ysmArr.push(newAc)
+        }
       }
     }
   }
@@ -332,7 +323,7 @@ function ysm4(ac) {
             ac.last_gold = (result.data.last_gold || 0) - 0
             ac.day_read = (result.data.day_read || 0) - 0
             ac.day_gold = (result.data.day_gold || 0) - 0
-            ac.remain_read = (result.data.remain_read || 0) + 60
+            ac.remain_read = (result.data.remain_read || 0) - 0
           }
         }
       } catch (e) {
@@ -363,10 +354,13 @@ function ysm3(ac, time) {
             ac.last_gold = (result.data.last_gold || 0) - 0
             ac.day_read = (result.data.day_read || 0) - 0
             ac.day_gold = (result.data.day_gold || 0) - 0
-            ac.remain_read = (result.data.remain_read || 0) + 60
+            ac.remain_read = (result.data.remain_read || 0) - 0
             if (ac.remain_read <= 0) {
               f = 0
               $.msg(`${$.name}: 账号${ac.no}`, '', `今日阅读已达上限，请明日继续`)
+            } else if (ysmBanhalfTask && ac.day_read == 50) {
+              f = 0
+              $.msg(`${$.name}: 账号${ac.no}`, '', `今日已阅读50篇，请手动阅读2篇再跑脚本`)
             } else {
               f = 1
             }
@@ -387,7 +381,7 @@ function ysm3(ac, time) {
   })
 }
 
-//云扫码提交
+//云扫码提交     
 function ysm2(ac, jumpLink, flag = 0) {
   return new Promise((resolve) => {
     let opts = {url: jumpLink}
@@ -401,10 +395,6 @@ function ysm2(ac, jumpLink, flag = 0) {
           $.logErr(`❌ 账号${ac.no} API请求失败，请检查网络后重试\n url: ${opts.url} \n data: ${JSON.stringify(err, null, 2)}`)
         } else {
           rtObj = $.toObj(data, {})
-          if (flag && rtObj && rtObj.url) {
-            // 尝试访问需要重定向的第三方接口地址
-            await ysm2(ac, rtObj.url)
-          }
         }
       } catch (e) {
         $.logErr(`======== 账号 ${ac.no} ========\nurl: ${opts.url}\nerror:${e}\ndata: ${resp && resp.body}`)
@@ -428,6 +418,9 @@ function ysm1(ac, count) {
       try {
         if (err) {
           $.logErr(`❌ 账号${ac.no} API请求失败，请检查网络后重试\n url: ${opts.url} \n data: ${JSON.stringify(err, null, 2)}`)
+        } else if (count > 55) {
+          f = -3
+          $.msg($.name, `账号${ac.no}`, `本阶段阅读循环次数过多，可能接口返回异常数据导致脚本死循环了，终止脚本运行`)
         } else {
           const result = JSON.parse(data)
           if (result.errcode == 0 && result.data && result.data.link) {
@@ -443,6 +436,9 @@ function ysm1(ac, count) {
               $.log(`🌝账号${ac.no}jump接口请求失败，重新执行阅读任务`)
               await $.wait(1500)
             }
+          } else if (data == '{"errcode":0,"msg":"success"}') {
+            $.logErr(`🚫账号${ac.no}：🧼来自肥皂的提示:当前没有任务啊,手动进云扫码看看是不是一直显示更新中,别问肥皂什么原因啦～`)
+            f = -3
           } else {
             $.logErr(`🚫账号${ac.no}：获取key回执失败：${(result.data && result.data.msg) || result.msg}`)
             if (((result.data && result.data.msg) || result.msg) == '请一个小时后再来') {
