@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          git clone https://github.com/adw2s/Action.git ~/Scripts
+          git clone ${{ secrets.GIT_CLONE_URL }} ~/Scripts
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
@@ -31,16 +31,10 @@ jobs:
           npm update
 
       - name: '运行 【16ysm(云扫码)】'
-        if: env.YSMURL
         run: |
           cd ~/Scripts
           node Task/16ysm.js
         env:
-          YSMURL: ${{ secrets.YSMURL }}
-          YSMHD: ${{ secrets.YSMHD }}
-          YSMBODY: ${{ secrets.YSMBODY }}
-          YSM2BODY: ${{ secrets.YSM2BODY }}
-          YSMTX: ${{ secrets.YSMTX }}
           ysmbd: ${{ secrets.ysmbd }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
