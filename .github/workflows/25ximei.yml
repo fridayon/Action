@@ -6,7 +6,7 @@ name: 25ximei(西梅)
 on:
   workflow_dispatch:
   schedule:
-     - cron: '2 2,12 * * *'
+     - cron: '2 2-16/4 * * *'
   watch:
     types: started
 #env:

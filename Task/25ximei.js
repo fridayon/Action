@@ -101,32 +101,59 @@ if(!$.isNode()&&ximeihd.indexOf("\n") ==-1){
 
 }
 
-!(async () => {
-  if (isximeick = typeof $request !== "undefined") {
-    await ximeick()
 
+
+if ($.isNode()) {
+   if (process.env.XIMEI_HD && process.env.XIMEI_HD.indexOf('\n') > -1) {
+   ximeihd = process.env.XIMEI_HD.split('\n');
+   console.log(`您选择的是用换行隔开\n`)
   } else {
-	  //ximeiurlArr.push($.getdata('ximeiurl'))
-    //ximeihdArr.push($.getdata('ximeihd'))
-    let ximeicount = ($.getval('ximeicount') || '1');
-  for (let i = 2; i <= ximeicount; i++) {
-    ximeiurlArr.push($.getdata(`ximeiurl${i}`))
-    ximeihdArr.push($.getdata(`ximeihd${i}`))
+   ximeihd = process.env.XIMEI_HD.split()
+  };
+  Object.keys(ximeihd).forEach((item) => {
+        if (ximeihd[item]) {
+          ximeihdArr.push(ximeihd[item])
+        }
+    });
+  if (process.env.XIMEI_URL && process.env.XIMEI_URL.indexOf('\n') > -1) {
+   ximeiurl = process.env.XIMEI_URL.split('\n');
+   console.log(`您选择的是用换行隔开\n`)
+  } else {
+   ximeiurl = process.env.XIMEI_URL.split()
+  };
+  Object.keys(ximeiurl).forEach((item) => {
+        if (ximeiurl[item]) {
+          ximeiurlArr.push(ximeiurl[item])
+        }
+    });
+ }else {
+   ximeiurlArr.push($.getdata('ximeiurl'))
+   ximeihdArr.push($.getdata('ximeihd'))
+   let ximeicount = ($.getval('ximeicount') || '1');
+ for (let i = 2; i <= ximeicount; i++) {
+   ximeiurlArr.push($.getdata(`ximeiurl${i}`))
+   ximeihdArr.push($.getdata(`ximeihd${i}`))
+ }
+
+!(async () => {
+  if (ximeihdArr == "") {
+    await ximeick()
   }
-    console.log(`------------- 共${ximeihdArr.length}个西梅账号-------------\n`)
-      for (let i = 0; i < ximeihdArr.length; i++) {
-        if (ximeihdArr[i]) {
+  console.log(`============ 脚本执行-国际标准时间(UTC)：${new Date().toLocaleString()}  =============\n`)
+  console.log(`============ 脚本执行-北京时间(UTC+8)：${new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleString()}  =============\n`)
+  console.log(`------------- 共${ximeihdArr.length}个西梅账号-------------\n`)
+    for (let i = 0; i < ximeihdArr.length; i++) {
+      if (ximeihdArr[i]) {
 
-          ximeiurl = ximeiurlArr[i];
-          ximeihd = ximeihdArr[i];
-          $.index = i + 1;
-          console.log(`\n开始【西梅${$.index}】`)
-          await ximei1();
-          await ximeixx();
+        ximeiurl = ximeiurlArr[i];
+        ximeihd = ximeihdArr[i];
+        $.index = i + 1;
+        console.log(`\n开始【西梅${$.index}】`)
+        await ximei1();
+        await ximeixx();
 
   }
-}}
-
+}
 })()
   .catch((e) => $.logErr(e))
   .finally(() => $.done())
