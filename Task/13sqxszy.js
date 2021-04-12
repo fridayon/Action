@@ -2028,7 +2028,7 @@ function msgShow() {
             $.msg($.name, ``, $.message);
         }
         */
-        if (notifyttt == 1 && $.isNode() && (nowTimes.getHours() === 12 || nowTimes.getHours() === 23))
+        if (notifyttt == 1 && $.isNode() && (nowTimes.getHours() >= 21 && nowTimes.getHours() <= 23))
             await notify.sendNotify($.name, $.message);
         resolve()
     })
