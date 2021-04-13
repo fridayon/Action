@@ -6,7 +6,7 @@ name: 29yqzh(悦趣阅读)
 on:
   workflow_dispatch:
   schedule:
-     - cron: '05 5,10,13,15 * * *'
+     - cron: '05 5,11,15 * * *'
   watch:
     types: started
 #env:
