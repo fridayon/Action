@@ -2014,10 +2014,10 @@ async function all() {
 //通知
 function msgShow() {
     return new Promise(async resolve => {
-      /*
         if (notifyInterval != 1) {
             console.log($.name + '\n' + $.message);
         }
+      /*
         if (notifyInterval == 1) {
             $.msg($.name, ``, $.message);
         }
@@ -2028,7 +2028,7 @@ function msgShow() {
             $.msg($.name, ``, $.message);
         }
         */
-        if (notifyttt == 1 && $.isNode() && (nowTimes.getHours() >= 21 && nowTimes.getHours() <= 23))
+        if (notifyttt == 1 && $.isNode() && (nowTimes.getHours() >= 14 && nowTimes.getHours() <= 16))
             await notify.sendNotify($.name, $.message);
         resolve()
     })
