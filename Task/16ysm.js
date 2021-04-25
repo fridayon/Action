@@ -91,6 +91,26 @@ const baseHeaders = {
   "X-Requested-With": "XMLHttpRequest"
 }
 
+
+
+if ($.isNode()) {
+  if (process.env.ysmbd && process.env.ysmbd.indexOf('#') > -1) {
+  ysmbd = process.env.ysmbd.split('#');
+  console.log(`您选择的是用"#"隔开\n`)
+  }
+  else if (process.env.ysmbd && process.env.ysmbd.indexOf('\n') > -1) {
+   ysmbd = process.env.ysmbd.split('\n');
+   console.log(`您选择的是用换行隔开\n`)
+  } else {
+   ysmbd = process.env.ysmbd.split()
+  };
+  Object.keys(ysmbd).forEach((item) => {
+        if (ysmbd[item]) {
+          ysm.push(JSON.parse(ysmbd[item]))
+        }
+    });
+}
+
 !(async () => {
   if (typeof $request !== "undefined") {
     await ysmck()
