@@ -1,0 +1,31 @@
+name: 30dogeda
+
+on:
+  workflow_dispatch:
+  schedule:
+     - cron: '10 5 * * *'
+  watch:
+    types: started
+#env:
+  #TZ: Asia/Shanghai
+
+jobs:
+  build1:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - name: Checkout
+        run: |
+          git clone ${{ secrets.GIT_CLONE_URL }} ~/Scripts
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: npm install
+        run: |
+          cd ~/Scripts
+          npm install
+      - name: '运行 【30dogeda】'
+        run: |
+          cd ~/Scripts
+          node Task/30dogeda.js
