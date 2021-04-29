@@ -44,10 +44,34 @@ if ($.isNode()) {
   minute = (new Date()).getMinutes();
 }
 
+if ($.isNode()) {
 
-cost doghdArr = ['{\"Accept-Encoding\":\"gzip, deflate\",\"Accept\":\"*/*\",\"Connection\":\"keep-alive\",\"Content-Type\":\"application/json\",\"Host\":\"www.legamify.com\",\"User-Agent\":\"iPhone12,1(iOS/13.6.1) Uninview(Uninview/1.0.0) Weex/0.26.0 828x1792\",\"Content-Length\":\"42\",\"unionid\":\"o21B7txJNAYvPkRKUqp5SPJayIBc\",\"token\":\"7b7ea37ae09f7ba230341790bc24af2b\",\"Accept-Language\":\"zh-cn\"}']
+   if (process.env.doghd && process.env.doghd.indexOf('\n') > -1) {
+   doghd = process.env.doghd.split('\n');
+   console.log(`您选择的是用换行隔开\n`)
+  } else {
+   doghd = process.env.doghd.split()
+  };
+  Object.keys(doghd).forEach((item) => {
+        if (doghd[item]) {
+          doghdArr.push(doghd[item])
+        }
+    });
+  if (process.env.dogbody && process.env.dogbody.indexOf('\n') > -1) {
+   dogbody = process.env.dogbody.split('\n');
+   console.log(`您选择的是用换行隔开\n`)
+  } else {
+   dogbody = process.env.dogbody.split()
+  };
+  Object.keys(dogbody).forEach((item) => {
+        if (dogbody[item]) {
+          dogbodyArr.push(dogbody[item])
+        }
+    });
 
-cost dogbodyArr = ['{"unionid":"o21B7txJNAYvPkRKUqp5SPJayIBc"}']
+    console.log(`============ 脚本执行-国际标准时间(UTC)：${new Date().toLocaleString()}  =============\n`)
+    console.log(`============ 脚本执行-北京时间(UTC+8)：${new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleString()}  =============\n`)
+ }
 
 !(async () => {
   
