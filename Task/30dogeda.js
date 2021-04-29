@@ -45,9 +45,9 @@ if ($.isNode()) {
 }
 
 
-cost doghdArr = ['','']
+cost doghdArr = ['{"Accept-Encoding":"gzip, deflate","Accept":"*/*","Connection":"keep-alive","Content-Type":"application/json","Host":"www.legamify.com","User-Agent":"iPhone12,1(iOS/13.6.1) Uninview(Uninview/1.0.0) Weex/0.26.0 828x1792","Content-Length":"42","unionid":"o21B7txJNAYvPkRKUqp5SPJayIBc","token":"7b7ea37ae09f7ba230341790bc24af2b","Accept-Language":"zh-cn"}']
 
-cost doghdArr = ['','']
+cost dogbodyArr = ['{"unionid":"o21B7txJNAYvPkRKUqp5SPJayIBc"}']
 
 !(async () => {
   
