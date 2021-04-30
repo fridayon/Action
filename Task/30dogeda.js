@@ -82,6 +82,7 @@ if ($.isNode()) {
           doghd = doghdArr[i];
           $.index = i + 1;
           console.log(`\n开始【DOGEDA${$.index}】`)
+          console.log(doghd+dogbody)
           await dogzy1();
           await $.wait(1000);
           await dogzl();
