@@ -114,8 +114,9 @@ async function dogzy1(){
     	}
    $.post(dogzy_url,async(error, response, data) =>{
     try{
-        const result = JSON.parse(data)
+        $.log(json.stringify(dogzy_url)
         $.log(data)
+        const result = JSON.parse(data)
         if(result.data == 1){
           $.log(`信息获取成功1`)
         } else {
