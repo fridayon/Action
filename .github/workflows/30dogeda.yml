@@ -28,4 +28,6 @@ jobs:
       - name: '运行 【30dogeda】'
         run: |
           cd ~/Scripts
-          node Task/30dogeda.js
+        env:
+          doghd : ${{ secrets.doghd }}
+          dogbody : ${{ secrets.dogbody }}
