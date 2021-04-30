@@ -82,11 +82,14 @@ if ($.isNode()) {
           doghd = doghdArr[i];
           $.index = i + 1;
           console.log(`\n开始【DOGEDA${$.index}】`)
-    await dogzy();
-    await $.wait(1000);
-    await dogzl();
-    await $.wait(3000);
-    await dogtx();}}}})()
+          await dogzy();
+          await $.wait(1000);
+          await dogzl();
+          await $.wait(3000);
+          await dogtx();
+        }
+      }
+  })()
   .catch((e) => $.logErr(e))
   .finally(() => $.done())
 
