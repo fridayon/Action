@@ -50,7 +50,7 @@ if ($.isNode()) {
    doghd = process.env.doghd.split('\n');
    console.log(`您选择的是用换行隔开\n`)
   } else {
-   doghd = process.env.doghd.split()
+   doghd = process.env.doghd
   };
   Object.keys(doghd).forEach((item) => {
         if (doghd[item]) {
@@ -61,7 +61,7 @@ if ($.isNode()) {
    dogbody = process.env.dogbody.split('\n');
    console.log(`您选择的是用换行隔开\n`)
   } else {
-   dogbody = process.env.dogbody.split()
+   dogbody = process.env.dogbody
   };
   Object.keys(dogbody).forEach((item) => {
         if (dogbody[item]) {
