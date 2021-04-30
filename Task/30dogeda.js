@@ -82,7 +82,7 @@ if ($.isNode()) {
           doghd = doghdArr[i];
           $.index = i + 1;
           console.log(`\n开始【DOGEDA${$.index}】`)
-          await dogzy();
+          await dogzy1();
           await $.wait(1000);
           await dogzl();
           await $.wait(3000);
@@ -103,6 +103,32 @@ function dogck() {
     //$.log(doghd)
    $.msg($.name,"",'DOGEDA'+`${status}` +'数据获取成功！') }}
 
+
+async function dogzy1(){
+ return new Promise((resolve) => {
+    id = dogbody.match(/"unionid":"(\w+)/)[1]
+    let dogzy_url = {
+        url : 'http://www.legamify.com/user/getuseinfo',
+        headers : JSON.parse(doghd),
+        body : dogbody,
+    	}
+   $.post(dogzy_url,async(error, response, data) =>{
+    try{
+        const result = JSON.parse(data)
+        $.log(data)
+        if(result.data == 1){
+          $.log(`信息获取成功1`)
+        } else {
+          $.log(`信息获取失败1`)
+        }
+        }catch(error) {
+          $.logErr(error, response);
+      } finally {
+        resolve();
+      }
+    })
+   })
+  }
 
 function dogzy(timeout = 0) {
   return new Promise((resolve) => {
