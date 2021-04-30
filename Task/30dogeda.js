@@ -114,7 +114,7 @@ async function dogzy1(){
     	}
    $.post(dogzy_url,async(error, response, data) =>{
     try{
-        $.log(json.stringify(dogzy_url)
+        $.log(JSON.stringify(dogzy_url))
         $.log(data)
         const result = JSON.parse(data)
         if(result.data == 1){
