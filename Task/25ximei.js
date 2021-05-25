@@ -116,8 +116,8 @@ if ($.isNode()) {
           await ximeiid();
           await ximeixx()
 
-  }
-}}
+        }
+      }
 
 })()
   .catch((e) => $.logErr(e))
